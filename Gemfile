@@ -13,8 +13,11 @@ gem 'puma', '~> 5.0'
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 5.0'
+
 # Turbo gives you the speed of a single-page web application without having to write any JavaScript.
-gem 'turbo-rails'
+gem 'stimulus-rails', '~> 0'
+gem 'turbo-rails', '~> 0'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
