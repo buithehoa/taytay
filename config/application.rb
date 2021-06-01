@@ -1,6 +1,8 @@
-require_relative "boot"
+# frozen_string_literal: true
 
-require "rails/all"
+require_relative 'boot'
+
+require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -19,6 +21,7 @@ module Taytay
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # TODO: Externalize credentials
     RSpotify.authenticate('2fab4ba642b846619622f92328704db3', '9873f5b2155948ab90feab471ceba287')
   end
 end
