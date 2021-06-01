@@ -18,5 +18,7 @@ module Taytay
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    RSpotify.authenticate('2fab4ba642b846619622f92328704db3', '9873f5b2155948ab90feab471ceba287')
   end
 end
