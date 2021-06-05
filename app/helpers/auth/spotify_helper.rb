@@ -1,0 +1,2 @@
+module Auth::SpotifyHelper
+end
