@@ -31,7 +31,7 @@ gem 'redis', '~> 4.0'
 gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'gingerhendrix-scrobbler2'
-gem 'rspotify', '>= 2.4.0'
+gem 'rspotify', '>= 2.10.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
