@@ -17,7 +17,6 @@ gem 'webpacker', '~> 5.0'
 # Turbo gives you the speed of a single-page web application without having to write any JavaScript.
 gem 'stimulus-rails', '~> 0'
 gem 'turbo-rails', '~> 0'
-gem 'importmap-rails', '~> 0.7.3'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.7'
