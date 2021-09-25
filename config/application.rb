@@ -1,15 +1,12 @@
-# frozen_string_literal: true
+require_relative "boot"
 
-require_relative 'boot'
-
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
 module Taytay
-  # :nodoc:
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.1
@@ -21,8 +18,5 @@ module Taytay
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
-    # TODO: Externalize credentials
-    RSpotify.authenticate('2fab4ba642b846619622f92328704db3', '9873f5b2155948ab90feab471ceba287')
   end
 end
