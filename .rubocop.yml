@@ -1,5 +1,3 @@
-inherit_from: ../.rubocop.yml
-
 AllCops:
   # DisableByDefault: true
   NewCops: enable
