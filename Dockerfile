@@ -24,7 +24,7 @@ FROM base as build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential pkg-config
+    apt-get install --no-install-recommends -y build-essential libpq-dev pkg-config
 
 # Install application gems
 COPY --link Gemfile Gemfile.lock ./
@@ -47,7 +47,7 @@ FROM base
 
 # Install packages needed for deployment
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libsqlite3-0 && \
+    apt-get install --no-install-recommends -y curl libsqlite3-0 postgresql-client && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
@@ -56,17 +56,12 @@ COPY --from=build /rails /rails
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
-    mkdir /data && \
-    chown -R rails:rails db log storage tmp /data
+    chown -R rails:rails db log storage tmp
 USER rails:rails
-
-# Deployment options
-ENV DATABASE_URL="sqlite3:///data/production.sqlite3"
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-VOLUME /data
 CMD ["./bin/rails", "server"]
