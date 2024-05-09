@@ -21,7 +21,7 @@ services:
         condition: service_healthy
 
   postgres-db:
-    image: postgres
+    image: postgres:14.11-bookworm
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
