@@ -12,6 +12,7 @@ WORKDIR /rails
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_WITHOUT="development:test" \
+    BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_DEPLOYMENT="1"
 
 # Update gems and bundler
@@ -67,4 +68,4 @@ ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["./bin/rails", "server"]
+CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
