@@ -54,6 +54,8 @@ group :development, :test do
 end
 
 group :development do
+  gem "dockerfile-rails", ">= 1.5"
+
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
@@ -71,7 +73,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "dockerfile-rails", ">= 1.5", :group => :development
+gem "lastfm", "~> 1.27.4"
 
 gem "sentry-ruby", "~> 5.12"
 

@@ -7,4 +7,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  resource :lastfm, controller: 'lastfm' do
+    get :authenticate
+  end
 end
