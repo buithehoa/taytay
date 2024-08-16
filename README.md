@@ -45,7 +45,7 @@ To get a local copy up and running, follow these steps.
 
 1. Clone the repo
    ```sh
-   git clone git@github.com:buithehoa/tablecheck_dpe.git
+   git clone git@github.com:buithehoa/taytay.git
    ```
 2. Build and run Docker containers by navigating to the project's root directory and executing
    ```sh
