@@ -52,3 +52,9 @@ To get a local copy up and running, follow these steps.
    docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build --remove-orphans
    ```
 3. Verify if Rails app is running by visiting http://localhost:3000 in your web browser.
+
+### Deployments
+
+```sh
+  fly deploy
+```
