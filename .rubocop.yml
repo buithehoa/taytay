@@ -1,6 +1,0 @@
-AllCops:
-  # DisableByDefault: true
-  NewCops: enable
-
-# Style/Documentation:
-#   Enabled: false
