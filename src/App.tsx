@@ -45,7 +45,7 @@ export function App({ handler }: AppProps) {
       <Static items={history}>
         {(entry, i) => <Scrollback key={i} entry={entry} />}
       </Static>
-      <Box borderStyle="round" paddingX={1}>
+      <Box borderStyle="round" borderLeft={false} borderRight={false} paddingX={1}>
         <PromptInput onSubmit={handleSubmit} />
       </Box>
     </Box>
