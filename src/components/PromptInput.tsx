@@ -2,16 +2,26 @@ import React, { useState } from 'react';
 import TextInput from 'ink-text-input';
 
 interface PromptInputProps {
-  onSubmit: (value: string) => void;
+  isFocused?: boolean;
+  onSubmit: (value: string) => boolean | void;
 }
 
-export function PromptInput({ onSubmit }: PromptInputProps) {
+export function PromptInput({ isFocused = true, onSubmit }: PromptInputProps) {
   const [value, setValue] = useState('');
 
   const handleSubmit = (submitted: string) => {
-    setValue('');
-    onSubmit(submitted);
+    const shouldClear = onSubmit(submitted);
+    if (shouldClear !== false) {
+      setValue('');
+    }
   };
 
-  return <TextInput value={value} onChange={setValue} onSubmit={handleSubmit} />;
+  return (
+    <TextInput
+      focus={isFocused}
+      value={value}
+      onChange={setValue}
+      onSubmit={handleSubmit}
+    />
+  );
 }
