@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding agents (Claude Code, Codex, etc.) when working with code in this repository. Codex is configured (`.codex/config.toml`) to fall back to this file since there's no separate `AGENTS.md`.
 
 ## Status
 
@@ -28,3 +28,12 @@ Node >=18, ESM only, package manager is pnpm. There is no automated test suite y
 - `src/commands/index.ts` — the `CommandHandler` type and `defaultHandler`; this is the seam where real command interpretation logic replaces the echo placeholder.
 
 `<Static>` is used for the scrollback so past lines are rendered once and never re-diffed — only the input box re-renders on keystrokes.
+
+## Working with superpowers plans
+
+Plans and specs live under `docs/superpowers/plans/` and `docs/superpowers/specs/`. The `executing-plans` and `subagent-driven-development` skills track task progress via ephemeral todos only — they do not update the plan file itself. So after a plan's tasks are all done (whichever agent/tool executed them), before wrapping up:
+
+1. Check off every completed step in the plan file (`- [ ]` → `- [x]`).
+2. Add a `**Status: Completed.**` line right under the title, noting the commit range that implemented it.
+
+This keeps a finished plan from looking like open work on a later pass.
