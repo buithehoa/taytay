@@ -42,9 +42,22 @@ of concept that command output can be rich Ink content, not just plain text.
 - **Escape**: dismisses the dropdown without executing anything, leaving
   the typed text as-is. Dismissal is cleared (the dropdown can reopen) on
   the next keystroke that changes the input.
-- The dropdown is implemented as an Ink `<Box position="absolute">`
-  overlay anchored above the input row, which Ink excludes from normal
-  flex layout — this is what prevents the input from shifting.
+- The dropdown occupies a **fixed-height reserved area** (5 rows) in
+  normal flex flow, directly above the input row — blank when closed or
+  showing fewer than 5 matches. This is the mechanism verified to actually
+  prevent the input from shifting (see note below); if more than 5
+  commands ever match a query, only the top 5 fuzzy-ranked results show.
+
+> **Note on how this was decided:** Ink's `Box` only exposes
+> `position: 'absolute' | 'relative'` plus margin props — there's no
+> CSS-style `top`/`bottom` anchor. Verified empirically (via
+> `ink-testing-library` frame snapshots): `position="absolute"` with no
+> margin renders at (0,0) of its container, which coincides with and
+> corrupts the input row; negative `marginTop` gets clipped out of the
+> frame entirely, invisible. A fixed-height reserved `Box` in normal flow
+> was confirmed to keep the total frame height constant (verified across
+> 0/1/2 matches) with no corruption, so that's the actual mechanism, not
+> absolute positioning.
 
 ## Architecture
 
@@ -67,7 +80,7 @@ src/App.tsx               # modified: removes bare exit/quit check, routes
 test/commands/
   registry.test.ts
   echo.test.ts
-package.json                # add "test": "node --test"; add fuzzysort dependency
+package.json                # add "test": "tsx --test ..."; add fuzzysort dependency
 ```
 
 New runtime dependency: `fuzzysort` (small, zero-dependency fuzzy string
@@ -213,7 +226,8 @@ know whether the dropdown was involved.
 `CommandDropdown.tsx` is purely presentational: given
 `{ matches: Command[]; focusedIndex: number }`, renders each as
 `` /name — description `` , highlighting the focused row, inside a
-`<Box position="absolute">` anchored directly above the input row.
+`<Box height={5}>` (the fixed reserved area) directly above the input row,
+padding unused rows with blank lines so the height never changes.
 
 ## Data flow (`App.tsx`)
 
@@ -270,8 +284,10 @@ seen.
 
 ## Testing
 
-`node --test` (new `test` script, no new test-runner dependency) covers
-the pure command-logic layer:
+`node:test` run via `tsx --test` (new `test` script; `tsx` is already a
+devDependency, so no new test-runner dependency — Node's built-in test
+runner can't execute TypeScript directly, `tsx` supplies that) covers the
+pure command-logic layer:
 
 - `registry.test.ts` — exact-match dispatch for `/echo hello` and
   `/exit`/`/quit` (alias), dispatch of an unknown command produces the
