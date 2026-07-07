@@ -1,5 +1,7 @@
 # Command Dropdown Below Input Implementation Plan
 
+**Status: Completed.** Implemented by commit `a8d4596` on branch `codex/dropdown-below-input`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Move the command autocomplete dropdown from a fixed-height area above the prompt input to a dynamically-sized area below it (Claude Code's behavior), removing the wasted blank space the current fixed 5-row reservation always occupies.
@@ -26,7 +28,7 @@
 **Interfaces:**
 - No signature changes. `CommandDropdown` still takes `{ matches: Command[]; focusedIndex: number }`; `MAX_VISIBLE_MATCHES` is still exported from `CommandDropdown.tsx` and still used by `PromptInput.tsx` to cap `registry.fuzzyMatch(...)` results — only its value and role change (cap on match count, not reserved rows).
 
-- [ ] **Step 1: Replace `src/components/CommandDropdown.tsx`**
+- [x] **Step 1: Replace `src/components/CommandDropdown.tsx`**
 
 ```tsx
 import React from 'react';
@@ -53,7 +55,7 @@ export function CommandDropdown({ matches, focusedIndex }: CommandDropdownProps)
 }
 ```
 
-- [ ] **Step 2: Replace `src/components/PromptInput.tsx`**
+- [x] **Step 2: Replace `src/components/PromptInput.tsx`**
 
 Only the `return` statement's JSX order changes (`<CommandDropdown>` moves from before to after the bordered input `Box`) — everything else in the file is unchanged from the current implementation:
 
@@ -136,17 +138,17 @@ export function PromptInput({ isFocused = true, onSubmit, registry }: PromptInpu
 }
 ```
 
-- [ ] **Step 3: Type-check**
+- [x] **Step 3: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 4: Confirm existing tests still pass**
+- [x] **Step 4: Confirm existing tests still pass**
 
 Run: `pnpm test`
 Expected: PASS (9 tests, unaffected — this change touches only presentational JSX)
 
-- [ ] **Step 5: Manual smoke test**
+- [x] **Step 5: Manual smoke test**
 
 Run: `pnpm dev`, then in the running terminal:
 1. Type `/`. Expected: the input box is where it's always been; a two-row list (`/exit — Exit the application`, `/echo — Print the given text as a heading`) appears directly *below* the input, with `/exit` highlighted (inverse). No blank/empty rows above or below the two matches.
@@ -158,7 +160,7 @@ Run: `pnpm dev`, then in the running terminal:
 7. Type `/`, press Escape. Expected: dropdown disappears, `/` remains in the input.
 8. Type `/exit`, press Enter. Expected: `> /exit` in scrollback, input clears, app exits cleanly shortly after.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/components/CommandDropdown.tsx src/components/PromptInput.tsx
