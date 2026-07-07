@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Static, useApp, useInput, useStdout } from 'ink';
 import { Scrollback, HistoryEntry } from './components/Scrollback.js';
 import { PromptInput } from './components/PromptInput.js';
-import { CommandHandler } from './commands/index.js';
+import { CommandHandler, CommandResult, createCommandRegistry } from './commands/index.js';
 
 const EXIT_RENDER_DELAY_MS = 50;
 
@@ -15,6 +15,7 @@ export function App({ handler }: AppProps) {
   const [isExiting, setIsExiting] = useState(false);
   const { exit } = useApp();
   const { write } = useStdout();
+  const commandRegistry = useMemo(() => createCommandRegistry(), []);
 
   useEffect(() => {
     if (isExiting) {
@@ -40,20 +41,23 @@ export function App({ handler }: AppProps) {
       return;
     }
 
-    if (trimmed === 'exit' || trimmed === 'quit') {
-      setIsExiting(true);
-      return false;
-    }
-
-    setHistory((h) => [...h, { type: 'input', text: trimmed }]);
+    setHistory((h) => [...h, { type: 'input', content: trimmed }]);
 
     void (async () => {
       try {
-        const result = await handler(trimmed);
-        setHistory((h) => [...h, { type: 'output', text: result }]);
+        const result: CommandResult = trimmed.startsWith('/')
+          ? await commandRegistry.dispatch(trimmed)
+          : { output: await handler(trimmed) };
+
+        if (result.output !== '') {
+          setHistory((h) => [...h, { type: 'output', content: result.output }]);
+        }
+        if (result.exit) {
+          setIsExiting(true);
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        setHistory((h) => [...h, { type: 'output', text: `Error: ${message}` }]);
+        setHistory((h) => [...h, { type: 'output', content: `Error: ${message}` }]);
       }
     })();
   };

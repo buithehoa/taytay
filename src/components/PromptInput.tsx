@@ -3,17 +3,15 @@ import TextInput from 'ink-text-input';
 
 interface PromptInputProps {
   isFocused?: boolean;
-  onSubmit: (value: string) => boolean | void;
+  onSubmit: (value: string) => void;
 }
 
 export function PromptInput({ isFocused = true, onSubmit }: PromptInputProps) {
   const [value, setValue] = useState('');
 
   const handleSubmit = (submitted: string) => {
-    const shouldClear = onSubmit(submitted);
-    if (shouldClear !== false) {
-      setValue('');
-    }
+    setValue('');
+    onSubmit(submitted);
   };
 
   return (

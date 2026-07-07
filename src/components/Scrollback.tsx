@@ -3,7 +3,7 @@ import { Text } from 'ink';
 
 export interface HistoryEntry {
   type: 'input' | 'output';
-  text: string;
+  content: string | React.ReactNode;
 }
 
 interface ScrollbackProps {
@@ -15,11 +15,15 @@ export function Scrollback({ entry }: ScrollbackProps) {
     return (
       <Text color="cyan">
         {'> '}
-        {entry.text}
+        {entry.content}
       </Text>
     );
   }
 
-  const isError = entry.text.startsWith('Error: ');
-  return <Text color={isError ? 'red' : undefined}>{entry.text}</Text>;
+  if (typeof entry.content !== 'string') {
+    return <>{entry.content}</>;
+  }
+
+  const isError = entry.content.startsWith('Error: ');
+  return <Text color={isError ? 'red' : undefined}>{entry.content}</Text>;
 }
