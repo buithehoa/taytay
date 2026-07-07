@@ -61,7 +61,13 @@ export function PromptInput({ isFocused = true, onSubmit, registry }: PromptInpu
 
   return (
     <Box flexDirection="column">
-      <Box borderStyle="round" borderLeft={false} borderRight={false} paddingX={1}>
+      <Box
+        borderStyle="round"
+        borderLeft={false}
+        borderRight={false}
+        minHeight={3}
+        paddingX={1}
+      >
         <TextInput
           key={inputVersion}
           focus={isFocused}

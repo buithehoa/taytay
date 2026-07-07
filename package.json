@@ -10,7 +10,7 @@
     "dev": "tsx src/cli.tsx",
     "build": "tsc && chmod +x dist/cli.js",
     "start": "node dist/cli.js",
-    "test": "tsx --test test/commands/*.test.ts"
+    "test": "tsx --test test/commands/*.test.ts test/components/*.test.tsx"
   },
   "dependencies": {
     "fuzzysort": "^3.1.0",
