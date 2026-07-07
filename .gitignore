@@ -5,3 +5,4 @@
 # `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`
 node_modules/
 dist/
+.worktrees/
