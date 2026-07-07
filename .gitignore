@@ -6,3 +6,4 @@
 node_modules/
 dist/
 .worktrees/
+.claude/settings.local.json

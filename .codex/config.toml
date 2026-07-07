@@ -1,3 +1,8 @@
 # Project-scoped Codex config (see https://developers.openai.com/codex/config-advanced).
 # This repo uses CLAUDE.md (not AGENTS.md) as its instructions file.
 project_doc_fallback_filenames = ["CLAUDE.md"]
+
+# Auto-approve actions in this project (reviewing generated code manually
+# instead of approving each step). Destructive commands are still hard-blocked
+# regardless of this setting - see .codex/rules/default.rules.
+approval_policy = "never"

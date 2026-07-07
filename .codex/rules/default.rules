@@ -1,0 +1,36 @@
+# Project-scoped Codex execpolicy rules (see https://developers.openai.com/codex/rules).
+# "forbidden" always overrides approval_policy, regardless of how permissive it is.
+
+prefix_rule(
+    pattern = ["rm"],
+    decision = "forbidden",
+    justification = "No destructive deletes without a human reviewing first",
+    match = [
+        "rm file.txt",
+        "rm -rf /",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f"]],
+    decision = "forbidden",
+    justification = "Force-push can overwrite remote history",
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "Discards uncommitted work irreversibly",
+)
+
+prefix_rule(
+    pattern = ["git", "clean", "-f"],
+    decision = "forbidden",
+    justification = "Irreversibly deletes untracked files",
+)
+
+prefix_rule(
+    pattern = ["git", "branch", "-D"],
+    decision = "forbidden",
+    justification = "Force-deletes a branch, discarding unmerged commits",
+)
