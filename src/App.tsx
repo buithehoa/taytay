@@ -67,9 +67,11 @@ export function App({ handler }: AppProps) {
       <Static items={history}>
         {(entry, i) => <Scrollback key={i} entry={entry} />}
       </Static>
-      <Box borderStyle="round" borderLeft={false} borderRight={false} paddingX={1}>
-        <PromptInput isFocused={!isExiting} onSubmit={handleSubmit} />
-      </Box>
+      <PromptInput
+        isFocused={!isExiting}
+        onSubmit={handleSubmit}
+        registry={commandRegistry}
+      />
     </Box>
   );
 }
