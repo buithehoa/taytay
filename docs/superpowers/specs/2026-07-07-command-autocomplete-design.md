@@ -3,10 +3,11 @@
 ## Purpose
 
 Add a slash-command system to `taytay`: typing `/` opens a fuzzy-filterable
-dropdown of predefined commands, rendered as an overlay above the prompt
-input (never shifting the input's position — a deliberate departure from
-Claude Code/Codex, whose suggestion lists push the input as they appear).
-Selecting and running a command executes real application logic instead of
+dropdown of predefined commands, rendered below the prompt input, growing
+and shrinking to fit the actual match count (Claude Code's behavior — see
+"Revision" note below for why this replaced the original above-input,
+fixed-height design). Selecting and running a command executes real
+application logic instead of
 the current echo placeholder, via a dedicated class per command. This also
 replaces the scaffold's ad hoc bare-word `exit`/`quit` handling with a
 proper `/exit` (aliased `/quit`) command, and introduces `/echo` as a proof
@@ -42,22 +43,29 @@ of concept that command output can be rich Ink content, not just plain text.
 - **Escape**: dismisses the dropdown without executing anything, leaving
   the typed text as-is. Dismissal is cleared (the dropdown can reopen) on
   the next keystroke that changes the input.
-- The dropdown occupies a **fixed-height reserved area** (5 rows) in
-  normal flex flow, directly above the input row — blank when closed or
-  showing fewer than 5 matches. This is the mechanism verified to actually
-  prevent the input from shifting (see note below); if more than 5
-  commands ever match a query, only the top 5 fuzzy-ranked results show.
+- The dropdown renders in normal flex flow **below** the input row, sized
+  to exactly `matches.length` rows (zero when closed), capped at 10
+  matches. There is no fixed-height reservation and no blank padding.
 
-> **Note on how this was decided:** Ink's `Box` only exposes
-> `position: 'absolute' | 'relative'` plus margin props — there's no
-> CSS-style `top`/`bottom` anchor. Verified empirically (via
-> `ink-testing-library` frame snapshots): `position="absolute"` with no
-> margin renders at (0,0) of its container, which coincides with and
-> corrupts the input row; negative `marginTop` gets clipped out of the
-> frame entirely, invisible. A fixed-height reserved `Box` in normal flow
-> was confirmed to keep the total frame height constant (verified across
-> 0/1/2 matches) with no corruption, so that's the actual mechanism, not
-> absolute positioning.
+> **Revision (post-implementation):** the original design above-input
+> with a fixed 5-row reservation, verified as a way to keep the input's
+> position perfectly static — was implemented, merged, and then rejected
+> on actual use: reserving 5 rows even when closed, or when only 2
+> commands exist, looked bad. The user's reference for the desired look
+> was OpenCode, which turned out **not** to use Ink at all (confirmed via
+> binary inspection: it's built on `@opentui/core`, a natively-rendered,
+> Zig-backed TUI engine — a different rendering stack entirely). A further
+> Ink spike confirmed a static input with a truly dynamic-height overlay
+> *is* mechanically possible in Ink, but only inside a fixed-total-height
+> ("fullscreen") layout with a flex-grow spacer — which requires replacing
+> the app's `<Static>`-based infinite scrollback with a bounded, self-managed
+> viewport, a much larger architectural change than fixing a dropdown.
+> Given that cost, the user chose to match Claude Code's own behavior
+> instead: dropdown below the input, input shifts up as the dropdown
+> grows. This keeps `<Static>`, keeps the current architecture, and was
+> verified via `ink-testing-library` to render cleanly (zero footprint
+> closed, exact-fit open, no corruption) with no exotic Ink features
+> needed at all.
 
 ## Architecture
 
@@ -224,10 +232,11 @@ above. On Enter with the dropdown visible, it resolves the submission to
 know whether the dropdown was involved.
 
 `CommandDropdown.tsx` is purely presentational: given
-`{ matches: Command[]; focusedIndex: number }`, renders each as
-`` /name — description `` , highlighting the focused row, inside a
-`<Box height={5}>` (the fixed reserved area) directly above the input row,
-padding unused rows with blank lines so the height never changes.
+`{ matches: Command[]; focusedIndex: number }` (already capped to 10 by
+the caller), renders each as `` /name — description `` , highlighting the
+focused row, inside a plain `<Box flexDirection="column">` with no fixed
+height and no padding — it renders exactly as many rows as there are
+matches, as a normal-flow sibling *after* (below) the bordered input row.
 
 ## Data flow (`App.tsx`)
 
