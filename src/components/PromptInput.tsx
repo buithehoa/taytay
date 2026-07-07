@@ -61,7 +61,6 @@ export function PromptInput({ isFocused = true, onSubmit, registry }: PromptInpu
 
   return (
     <Box flexDirection="column">
-      <CommandDropdown matches={matches} focusedIndex={focusedIndex} />
       <Box borderStyle="round" borderLeft={false} borderRight={false} paddingX={1}>
         <TextInput
           key={inputVersion}
@@ -71,6 +70,7 @@ export function PromptInput({ isFocused = true, onSubmit, registry }: PromptInpu
           onSubmit={handleSubmit}
         />
       </Box>
+      <CommandDropdown matches={matches} focusedIndex={focusedIndex} />
     </Box>
   );
 }
