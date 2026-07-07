@@ -1,5 +1,7 @@
 # Command Autocomplete Implementation Plan
 
+**Status: Completed.** Implemented by commits `febf24b..05a9cb7` on branch `codex/command-autocomplete`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a slash-command system to `taytay` — typing `/` opens a fuzzy-filterable dropdown of predefined commands in a fixed-height area above the input (never shifting it), executed via per-command classes, replacing the scaffold's echo placeholder and ad hoc bare-word exit/quit handling.
@@ -27,7 +29,7 @@
 **Interfaces:**
 - Produces: a working `pnpm test` script and the `fuzzysort` dependency, both required by later tasks.
 
-- [ ] **Step 1: Update `package.json`**
+- [x] **Step 1: Update `package.json`**
 
 ```json
 {
@@ -62,19 +64,19 @@
 }
 ```
 
-- [ ] **Step 2: Install**
+- [x] **Step 2: Install**
 
 Run: `pnpm install`
 Expected: completes without error, `fuzzysort` added to `node_modules` and `pnpm-lock.yaml`.
 
-- [ ] **Step 3: Verify fuzzysort resolves**
+- [x] **Step 3: Verify fuzzysort resolves**
 
 Run: `pnpm exec node --input-type=module -e "import fuzzysort from 'fuzzysort'; console.log(typeof fuzzysort.single)"`
 Expected: prints `function`
 
 (`pnpm test` isn't run yet — no test files exist until Task 4.)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add package.json pnpm-lock.yaml
@@ -91,7 +93,7 @@ git commit -m "chore: add fuzzysort dependency and test script"
 **Interfaces:**
 - Produces: `Command` interface (`names: string[]`, `description: string`, `execute(arg: string): CommandResult | Promise<CommandResult>`) and `CommandResult` (`{ output: string | React.ReactNode; exit?: boolean }`), consumed by every task from here on.
 
-- [ ] **Step 1: Write `src/commands/Command.ts`**
+- [x] **Step 1: Write `src/commands/Command.ts`**
 
 ```ts
 import type { ReactNode } from 'react';
@@ -108,12 +110,12 @@ export interface Command {
 }
 ```
 
-- [ ] **Step 2: Type-check**
+- [x] **Step 2: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/commands/Command.ts
@@ -131,7 +133,7 @@ git commit -m "feat: add Command interface and CommandResult type"
 - Consumes: `Command`, `CommandResult` from `./Command.js` (Task 2).
 - Produces: `ExitCommand` class (`names: ['exit', 'quit']`), consumed by `registry.ts` (Task 5). Its behavior is verified indirectly via `registry.test.ts`'s dispatch tests in Task 5, not a dedicated test file here.
 
-- [ ] **Step 1: Write `src/commands/ExitCommand.ts`**
+- [x] **Step 1: Write `src/commands/ExitCommand.ts`**
 
 ```ts
 import { Command, CommandResult } from './Command.js';
@@ -146,12 +148,12 @@ export class ExitCommand implements Command {
 }
 ```
 
-- [ ] **Step 2: Type-check**
+- [x] **Step 2: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/commands/ExitCommand.ts
@@ -171,7 +173,7 @@ git commit -m "feat: add ExitCommand (aliases exit and quit)"
 - Consumes: `Command`, `CommandResult` from `../commands/Command.js` (Task 2).
 - Produces: `Heading` component (props: `{ children: React.ReactNode }`), `EchoCommand` class (`names: ['echo']`), consumed by `registry.ts` (Task 5).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // test/commands/echo.test.ts
@@ -195,12 +197,12 @@ test('EchoCommand is registered under the name "echo"', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pnpm test`
 Expected: FAIL — cannot find module `../../src/commands/EchoCommand.js` (the file doesn't exist yet).
 
-- [ ] **Step 3: Write `src/components/Heading.tsx`**
+- [x] **Step 3: Write `src/components/Heading.tsx`**
 
 ```tsx
 import React from 'react';
@@ -211,7 +213,7 @@ export function Heading({ children }: { children: React.ReactNode }) {
 }
 ```
 
-- [ ] **Step 4: Write `src/commands/EchoCommand.tsx`**
+- [x] **Step 4: Write `src/commands/EchoCommand.tsx`**
 
 ```tsx
 import React from 'react';
@@ -228,17 +230,17 @@ export class EchoCommand implements Command {
 }
 ```
 
-- [ ] **Step 5: Run test to verify it passes**
+- [x] **Step 5: Run test to verify it passes**
 
 Run: `pnpm test`
 Expected: PASS (2 tests)
 
-- [ ] **Step 6: Type-check**
+- [x] **Step 6: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/Heading.tsx src/commands/EchoCommand.tsx test/commands/echo.test.ts
@@ -258,7 +260,7 @@ git commit -m "feat: add EchoCommand with Heading rich-content output"
 - Consumes: `Command`, `CommandResult` (Task 2); `ExitCommand` (Task 3); `EchoCommand` (Task 4).
 - Produces: `CommandRegistry` class (`fuzzyMatch(query: string): Command[]`, `dispatch(line: string): CommandResult | Promise<CommandResult>`) and `createCommandRegistry(): CommandRegistry`, both exported from `src/commands/index.ts` and consumed by `App.tsx` (Task 6) and `PromptInput.tsx` (Task 7).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // test/commands/registry.test.ts
@@ -322,12 +324,12 @@ test('fuzzyMatch ranks the tighter match first', () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `pnpm test`
 Expected: FAIL — cannot find module `../../src/commands/index.js`'s exports `createCommandRegistry`/`CommandRegistry` (they don't exist yet).
 
-- [ ] **Step 3: Write `src/commands/registry.ts`**
+- [x] **Step 3: Write `src/commands/registry.ts`**
 
 ```ts
 import fuzzysort from 'fuzzysort';
@@ -371,7 +373,7 @@ export class CommandRegistry {
 }
 ```
 
-- [ ] **Step 4: Update `src/commands/index.ts`**
+- [x] **Step 4: Update `src/commands/index.ts`**
 
 Replace the full contents of `src/commands/index.ts` with:
 
@@ -394,17 +396,17 @@ export function createCommandRegistry(): CommandRegistry {
 }
 ```
 
-- [ ] **Step 5: Run test to verify it passes**
+- [x] **Step 5: Run test to verify it passes**
 
 Run: `pnpm test`
 Expected: PASS (7 tests in `registry.test.ts`, plus the 2 from `echo.test.ts` — 9 total)
 
-- [ ] **Step 6: Type-check**
+- [x] **Step 6: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/commands/registry.ts src/commands/index.ts test/commands/registry.test.ts
@@ -426,7 +428,7 @@ git commit -m "feat: add CommandRegistry with fuzzy matching and dispatch"
 
 This task makes typing a full command line (e.g. `/echo hello`, `/exit`) work end-to-end via Enter, without any autocomplete dropdown — that's added in Task 7.
 
-- [ ] **Step 1: Replace `src/components/Scrollback.tsx`**
+- [x] **Step 1: Replace `src/components/Scrollback.tsx`**
 
 ```tsx
 import React from 'react';
@@ -460,7 +462,7 @@ export function Scrollback({ entry }: ScrollbackProps) {
 }
 ```
 
-- [ ] **Step 2: Replace `src/components/PromptInput.tsx`**
+- [x] **Step 2: Replace `src/components/PromptInput.tsx`**
 
 ```tsx
 import React, { useState } from 'react';
@@ -490,7 +492,7 @@ export function PromptInput({ isFocused = true, onSubmit }: PromptInputProps) {
 }
 ```
 
-- [ ] **Step 3: Replace `src/App.tsx`**
+- [x] **Step 3: Replace `src/App.tsx`**
 
 ```tsx
 import React, { useEffect, useMemo, useState } from 'react';
@@ -570,17 +572,17 @@ export function App({ handler }: AppProps) {
 }
 ```
 
-- [ ] **Step 4: Type-check**
+- [x] **Step 4: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 5: Confirm existing tests still pass**
+- [x] **Step 5: Confirm existing tests still pass**
 
 Run: `pnpm test`
 Expected: PASS (9 tests, unaffected by these UI-layer changes)
 
-- [ ] **Step 6: Manual smoke test**
+- [x] **Step 6: Manual smoke test**
 
 Run: `pnpm dev`, then in the running terminal:
 1. Type `/echo Hello World` and press Enter. Expected: bold yellow `Hello World` appears above the input.
@@ -589,7 +591,7 @@ Run: `pnpm dev`, then in the running terminal:
 4. Type `/exit` and press Enter. Expected: `> /exit` appears in the scrollback, the input clears immediately, and the process exits cleanly shortly after.
 5. Run `pnpm dev` again, type `/quit`, press Enter. Expected: same clean-exit behavior as `/exit`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/Scrollback.tsx src/components/PromptInput.tsx src/App.tsx
@@ -609,7 +611,7 @@ git commit -m "feat: dispatch slash commands through CommandRegistry"
 - Consumes: `Command` from `../commands/Command.js` (Task 2); `CommandRegistry` from `../commands/index.js` (Task 5).
 - Produces: `CommandDropdown` component (props: `{ matches: Command[]; focusedIndex: number }`) and `MAX_VISIBLE_MATCHES` constant (`5`), both consumed by `PromptInput.tsx`. `PromptInput` gains a required `registry: CommandRegistry` prop.
 
-- [ ] **Step 1: Write `src/components/CommandDropdown.tsx`**
+- [x] **Step 1: Write `src/components/CommandDropdown.tsx`**
 
 ```tsx
 import React from 'react';
@@ -642,7 +644,7 @@ export function CommandDropdown({ matches, focusedIndex }: CommandDropdownProps)
 }
 ```
 
-- [ ] **Step 2: Replace `src/components/PromptInput.tsx`**
+- [x] **Step 2: Replace `src/components/PromptInput.tsx`**
 
 The border that used to wrap `<PromptInput>` from `App.tsx` moves in here, now wrapping only the `TextInput` row — `CommandDropdown` sits above it as a sibling, both inside a column `Box`:
 
@@ -722,7 +724,7 @@ export function PromptInput({ isFocused = true, onSubmit, registry }: PromptInpu
 }
 ```
 
-- [ ] **Step 3: Modify `src/App.tsx`**
+- [x] **Step 3: Modify `src/App.tsx`**
 
 Replace the return statement — the bordered `<Box>` that used to wrap `<PromptInput>` is gone (the border now lives inside `PromptInput`, from Step 2), and `PromptInput` gets the new `registry` prop:
 
@@ -741,17 +743,17 @@ Replace the return statement — the bordered `<Box>` that used to wrap `<Prompt
   );
 ```
 
-- [ ] **Step 4: Type-check**
+- [x] **Step 4: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 5: Confirm existing tests still pass**
+- [x] **Step 5: Confirm existing tests still pass**
 
 Run: `pnpm test`
 Expected: PASS (9 tests, unaffected)
 
-- [ ] **Step 6: Manual smoke test**
+- [x] **Step 6: Manual smoke test**
 
 Run: `pnpm dev`, then in the running terminal:
 1. Type `/`. Expected: dropdown shows two rows, `/exit — Exit the application` and `/echo — Print the given text as a heading`, with `/exit` highlighted (inverse) by default. The bordered input row does not move.
@@ -764,7 +766,7 @@ Run: `pnpm dev`, then in the running terminal:
 8. With `/exit` focused, press Enter directly (no Tab). Expected: `> /exit` appears in the scrollback, input clears, app exits cleanly shortly after.
 9. Run `pnpm dev` again, type `hi`, press Enter. Expected: `you typed: hi` (default handler still works, unaffected by the dropdown).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/CommandDropdown.tsx src/components/PromptInput.tsx src/App.tsx
