@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 export interface CommandResult {
   output: string | ReactNode;
   exit?: boolean;
+  screen?: ComponentType<{ onClose: () => void }>;
 }
 
 export interface Command {

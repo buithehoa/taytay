@@ -42,7 +42,7 @@ test('dispatch returns an error for an unknown command', async () => {
 test('fuzzyMatch with an empty query returns all commands in registration order', () => {
   const registry = createCommandRegistry();
   const names = registry.fuzzyMatch('').map((c) => c.names[0]);
-  assert.deepEqual(names, ['exit', 'echo']);
+  assert.deepEqual(names, ['exit', 'echo', 'connect']);
 });
 
 test('fuzzyMatch matches a non-contiguous subsequence', () => {
