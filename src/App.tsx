@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ComponentType, useEffect, useMemo, useState } from 'react';
 import { Box, Static, useApp, useInput, useStdout } from 'ink';
 import { Scrollback, HistoryEntry } from './components/Scrollback.js';
 import { PromptInput } from './components/PromptInput.js';
 import { CommandHandler, CommandResult, createCommandRegistry } from './commands/index.js';
 
 const EXIT_RENDER_DELAY_MS = 50;
+
+type ScreenComponent = ComponentType<{ onClose: () => void }>;
 
 interface AppProps {
   handler: CommandHandler;
@@ -13,6 +15,7 @@ interface AppProps {
 export function App({ handler }: AppProps) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isExiting, setIsExiting] = useState(false);
+  const [activeScreen, setActiveScreen] = useState<ScreenComponent | null>(null);
   const { exit } = useApp();
   const { write } = useStdout();
   const commandRegistry = useMemo(() => createCommandRegistry(), []);
@@ -52,6 +55,10 @@ export function App({ handler }: AppProps) {
         if (result.output !== '') {
           setHistory((h) => [...h, { type: 'output', content: result.output }]);
         }
+        if (result.screen) {
+          const screen = result.screen;
+          setActiveScreen(() => screen);
+        }
         if (result.exit) {
           setIsExiting(true);
         }
@@ -62,16 +69,22 @@ export function App({ handler }: AppProps) {
     })();
   };
 
+  const ActiveScreen = activeScreen;
+
   return (
     <Box flexDirection="column">
       <Static items={history}>
         {(entry, i) => <Scrollback key={i} entry={entry} />}
       </Static>
-      <PromptInput
-        isFocused={!isExiting}
-        onSubmit={handleSubmit}
-        registry={commandRegistry}
-      />
+      {ActiveScreen ? (
+        <ActiveScreen onClose={() => setActiveScreen(null)} />
+      ) : (
+        <PromptInput
+          isFocused={!isExiting}
+          onSubmit={handleSubmit}
+          registry={commandRegistry}
+        />
+      )}
     </Box>
   );
 }
