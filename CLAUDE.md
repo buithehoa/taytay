@@ -18,7 +18,7 @@ Implementation plan: `docs/superpowers/plans/2026-07-05-blank-tui-scaffold.md`
 - `pnpm start` — run the built output (`dist/cli.js`)
 - `pnpm test` — run the automated test suite (`tsx --test` over `test/commands/`, `test/components/`, `test/services/`)
 
-Node >=18, ESM only, package manager is pnpm. `pnpm test` runs the automated suite (`tsx --test` over `test/commands/`, `test/components/`, and `test/services/`); new tests should go in the matching subdirectory following the existing `node:test` + `node:assert/strict` pattern. There's also a manual smoke test described in `README.md` (type `hello`, expect `you typed: hello`; type `/connect` to exercise the Settings screen; type `exit` or press `Ctrl+C` to quit cleanly).
+Node >=18, ESM only, package manager is pnpm. New tests go in the matching `test/` subdirectory, following the existing `node:test` + `node:assert/strict` pattern. There's also a manual smoke test described in `README.md` (type `hello`, expect `you typed: hello`; type `/connect` to exercise the Settings screen; type `exit` or press `Ctrl+C` to quit cleanly).
 
 ## Architecture
 
