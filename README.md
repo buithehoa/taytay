@@ -25,6 +25,9 @@ pnpm dev
 Development smoke test:
 
 - Type `hello` and press Enter. Expected: `hello` echoes as `you typed: hello`.
+- Type `/connect` and press Enter. Expected: the Settings screen replaces the prompt, with the Integration tab active showing LastFm and Spotify rows.
+- Press `Space` on a row. Expected: a spinner while connecting, then a green `Connected`.
+- Press `Esc`. Expected: the screen closes and the prompt returns.
 - Type `exit` and press Enter. Expected: the process exits cleanly.
 - Run `pnpm dev` again and press `Ctrl+C`. Expected: the process exits cleanly.
 
@@ -47,5 +50,8 @@ pnpm start
 Production smoke test:
 
 - Type `hello` and press Enter. Expected: `hello` echoes as `you typed: hello`.
+- Type `/connect` and press Enter. Expected: the Settings screen replaces the prompt, with the Integration tab active showing LastFm and Spotify rows.
+- Press `Space` on a row. Expected: a spinner while connecting, then a green `Connected`.
+- Press `Esc`. Expected: the screen closes and the prompt returns.
 - Type `exit` and press Enter. Expected: the process exits cleanly.
 - Run `pnpm start` again and press `Ctrl+C`. Expected: the process exits cleanly.
