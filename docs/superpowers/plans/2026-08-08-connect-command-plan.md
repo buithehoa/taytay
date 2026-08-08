@@ -1,5 +1,7 @@
 # `/connect` Command Implementation Plan
 
+**Status: Completed.** Implemented by commits `1f2fe29` through `646da12` on `main` (Tasks 1-6); Task 7 (full verification + automated smoke-test substitute) closed out in the commit that added this status line.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a `/connect` command that opens a full-screen "Settings" UI for managing LastFm/Spotify integrations (stubbed connectors), introducing the `CommandResult.screen` seam so commands can take over the terminal view and keyboard input.
@@ -37,7 +39,7 @@ Design spec: `docs/superpowers/specs/2026-08-08-connect-command-design.md`
 - Consumes: nothing (leaf module).
 - Produces: `interface ServiceConnector { connect(): Promise<void>; disconnect(): Promise<void>; }` and `createStubConnector(delayMs?: number): ServiceConnector` (default delay 800ms, always resolves). Used by `connectionStore.toggle(serviceId, connector)` (Task 2) and the `INTEGRATION_SERVICES` config array (Task 3).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `test/services/connectors.test.ts`:
 
@@ -59,12 +61,12 @@ test('stub connector disconnect() resolves', async () => {
 });
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `pnpm exec tsx --test test/services/connectors.test.ts`
 Expected: FAIL — cannot find module `src/services/connectors.js`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 Create `src/services/connectors.ts`:
 
@@ -91,12 +93,12 @@ export function createStubConnector(
 }
 ```
 
-- [ ] **Step 4: Run the test to verify it passes**
+- [x] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm exec tsx --test test/services/connectors.test.ts`
 Expected: PASS (2 tests).
 
-- [ ] **Step 5: Extend the `test` script glob**
+- [x] **Step 5: Extend the `test` script glob**
 
 In `package.json`, change the `test` script from:
 
@@ -113,12 +115,12 @@ to:
 Run: `pnpm test`
 Expected: all existing tests plus the two new connector tests pass.
 
-- [ ] **Step 6: Type-check**
+- [x] **Step 6: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/services/connectors.ts test/services/connectors.test.ts package.json
@@ -142,7 +144,7 @@ git commit -m "feat: add ServiceConnector interface with stub implementation"
   - `connectionStore: ConnectionStore` (module-level singleton, used by `IntegrationTab` in Task 3)
 - `toggle` semantics: from `disconnected`/`error` start a connect (`connecting` → `connected`, or `error` on rejection); from `connected` start a disconnect (`disconnecting` → `disconnected`, or `error` on rejection); ignored while `connecting`/`disconnecting`. Because the promise continuations live in the store (module state), an operation keeps running and settles even if the screen unmounts — this is what lets Esc leave mid-operation per the spec.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `test/services/connection-store.test.ts`:
 
@@ -274,12 +276,12 @@ test('services are tracked independently', async () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pnpm exec tsx --test test/services/connection-store.test.ts`
 Expected: FAIL — cannot find module `src/services/connectionStore.js`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 Create `src/services/connectionStore.ts`:
 
@@ -347,17 +349,17 @@ export function createConnectionStore(): ConnectionStore {
 export const connectionStore: ConnectionStore = createConnectionStore();
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `pnpm exec tsx --test test/services/connection-store.test.ts`
 Expected: PASS (7 tests).
 
-- [ ] **Step 5: Type-check**
+- [x] **Step 5: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/services/connectionStore.ts test/services/connection-store.test.ts
@@ -378,7 +380,7 @@ git commit -m "feat: add in-memory connection status store with subscribe/notify
 - Produces: `interface IntegrationService { id: string; label: string; connector: ServiceConnector; }`; `INTEGRATION_SERVICES: IntegrationService[]` (LastFm + Spotify with default stub connectors); `IntegrationTab` component with props `{ services?: IntegrationService[]; store?: ConnectionStore }` (both optional, defaulting to `INTEGRATION_SERVICES` and the `connectionStore` singleton — the optional props exist for test injection). Rendered by `ConnectScreen` (Task 4) with no props.
 - Keyboard: `↑`/`↓` move the focused row (clamped at the ends, no wrap); `Space` or `Enter` (`key.return`) calls `store.toggle(service.id, service.connector)` for the focused row. `Tab`/`Esc` are deliberately not handled here (they belong to `ConnectScreen`).
 
-- [ ] **Step 1: Install the new dependencies**
+- [x] **Step 1: Install the new dependencies**
 
 Run:
 
@@ -389,7 +391,7 @@ pnpm add -D ink-testing-library@^4.0.0
 
 Expected: both install without peer-dependency errors against `ink@^5.0.1` / `react@^18.3.1`.
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 Create `test/components/integration-tab.test.tsx`:
 
@@ -530,12 +532,12 @@ test('a failed connect shows the error state and the row still reads Connect', a
 });
 ```
 
-- [ ] **Step 3: Run the tests to verify they fail**
+- [x] **Step 3: Run the tests to verify they fail**
 
 Run: `pnpm exec tsx --test test/components/integration-tab.test.tsx`
 Expected: FAIL — cannot find module `src/components/IntegrationTab.js`.
 
-- [ ] **Step 4: Write the implementation**
+- [x] **Step 4: Write the implementation**
 
 Create `src/components/IntegrationTab.tsx`:
 
@@ -627,17 +629,17 @@ Notes for the implementer:
 - The `useReducer` counter + `store.subscribe(forceRender)` effect is what re-renders the rows when the store changes from outside React (e.g. a promise settling). `subscribe` returns the unsubscribe function, which doubles as the effect cleanup.
 - The fixed `LABEL_COLUMN_WIDTH` keeps the status column aligned without depending on terminal width (deterministic in tests).
 
-- [ ] **Step 5: Run the tests to verify they pass**
+- [x] **Step 5: Run the tests to verify they pass**
 
 Run: `pnpm exec tsx --test test/components/integration-tab.test.tsx`
 Expected: PASS (5 tests).
 
-- [ ] **Step 6: Type-check**
+- [x] **Step 6: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/IntegrationTab.tsx test/components/integration-tab.test.tsx package.json pnpm-lock.yaml
@@ -658,7 +660,7 @@ git commit -m "feat: add IntegrationTab with row navigation and connect toggling
 - Produces: `OtherTab` component (no props); `ConnectScreen` component with props `{ onClose: () => void }` — this exact props shape is what `CommandResult.screen` (Task 5) and `App.tsx` (Task 6) type against.
 - Keyboard: `Tab` toggles between the `integration` and `other` tabs; `Esc` calls `onClose`. Arrows/space/enter pass through to `IntegrationTab`'s own `useInput` when that tab is mounted (Ink delivers input to every mounted `useInput` hook; each hook ignores keys it doesn't handle).
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `test/components/connect-screen.test.tsx`:
 
@@ -727,12 +729,12 @@ test('escape calls onClose', async () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `pnpm exec tsx --test test/components/connect-screen.test.tsx`
 Expected: FAIL — cannot find module `src/components/ConnectScreen.js`.
 
-- [ ] **Step 3: Write the implementations**
+- [x] **Step 3: Write the implementations**
 
 Create `src/components/OtherTab.tsx`:
 
@@ -798,17 +800,17 @@ export function ConnectScreen({ onClose }: ConnectScreenProps) {
 }
 ```
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `pnpm exec tsx --test test/components/connect-screen.test.tsx`
 Expected: PASS (3 tests).
 
-- [ ] **Step 5: Type-check**
+- [x] **Step 5: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/components/ConnectScreen.tsx src/components/OtherTab.tsx test/components/connect-screen.test.tsx
@@ -830,7 +832,7 @@ git commit -m "feat: add ConnectScreen with Integration/Other tabs and escape-to
 - Consumes: `ConnectScreen` from `src/components/ConnectScreen.js` (Task 4); existing `Command`/`CommandResult` from `src/commands/Command.js` and `CommandRegistry` from `src/commands/registry.js`.
 - Produces: `CommandResult.screen?: ComponentType<{ onClose: () => void }>` — the new seam `App.tsx` consumes in Task 6; `ConnectCommand` class (`names = ['connect']`, `execute()` returns `{ output: '', screen: ConnectScreen }`) registered in `createCommandRegistry()` after `ExitCommand` and `EchoCommand`, so registration order is `['exit', 'echo', 'connect']`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `test/commands/connect.test.ts`:
 
@@ -855,7 +857,7 @@ test('/connect fuzzy-matches in the dropdown', () => {
 });
 ```
 
-- [ ] **Step 2: Update the registration-order assertion in the existing registry test**
+- [x] **Step 2: Update the registration-order assertion in the existing registry test**
 
 In `test/commands/registry.test.ts`, the test `fuzzyMatch with an empty query returns all commands in registration order` currently asserts:
 
@@ -869,12 +871,12 @@ Change it to:
 assert.deepEqual(names, ['exit', 'echo', 'connect']);
 ```
 
-- [ ] **Step 3: Run the tests to verify they fail**
+- [x] **Step 3: Run the tests to verify they fail**
 
 Run: `pnpm exec tsx --test test/commands/connect.test.ts test/commands/registry.test.ts`
 Expected: FAIL — `connect.test.ts` cannot find `src/commands/ConnectCommand`-provided registration (unknown command `/connect`), and the updated registration-order assertion fails.
 
-- [ ] **Step 4: Write the implementation**
+- [x] **Step 4: Write the implementation**
 
 Modify `src/commands/Command.ts` to add the `screen` field (full file):
 
@@ -932,17 +934,17 @@ export function createCommandRegistry(): CommandRegistry {
 }
 ```
 
-- [ ] **Step 5: Run the full test suite to verify it passes**
+- [x] **Step 5: Run the full test suite to verify it passes**
 
 Run: `pnpm test`
 Expected: PASS — including the two new connect tests and the updated registry-order test; no regressions in echo/prompt-input/services/component tests.
 
-- [ ] **Step 6: Type-check**
+- [x] **Step 6: Type-check**
 
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/commands/Command.ts src/commands/ConnectCommand.tsx src/commands/index.ts test/commands/connect.test.ts test/commands/registry.test.ts
@@ -961,7 +963,7 @@ git commit -m "feat: add CommandResult.screen seam and register /connect"
 - Consumes: `CommandResult.screen` (Task 5); `PromptInput`, `Scrollback` unchanged.
 - Produces: `App` renders the active screen in place of `PromptInput` when a dispatched command's result includes `screen`; the screen's `onClose` resets it back to the prompt. `<Static items={history}>` stays mounted throughout — only the live region below it swaps (Global Constraints).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `test/components/app.test.tsx`:
 
@@ -1005,12 +1007,12 @@ test('/connect opens the Settings screen and Esc returns to the prompt', async (
 
 Note: typing `/connect` makes the command dropdown appear; pressing Enter resolves through the dropdown's focused match, which dispatches `/connect` — that is the normal submit path and needs no special handling in the test.
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `pnpm exec tsx --test test/components/app.test.tsx`
 Expected: FAIL — the `Settings` assertion fails because `App` ignores `result.screen` (the prompt stays rendered).
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 Replace `src/App.tsx` with:
 
@@ -1113,12 +1115,12 @@ Notes for the implementer:
 - Command dispatch errors still land in the existing `catch` → `Error: ...` scrollback path; nothing changes there.
 - `App`'s own `useInput` (Ctrl+C) stays active while a screen is open — Ink delivers input to all mounted `useInput` hooks — so Ctrl+C still exits immediately.
 
-- [ ] **Step 4: Run the test to verify it passes**
+- [x] **Step 4: Run the test to verify it passes**
 
 Run: `pnpm exec tsx --test test/components/app.test.tsx`
 Expected: PASS.
 
-- [ ] **Step 5: Run the full suite and type-check**
+- [x] **Step 5: Run the full suite and type-check**
 
 Run: `pnpm test`
 Expected: all tests pass.
@@ -1126,7 +1128,7 @@ Expected: all tests pass.
 Run: `pnpm exec tsc --noEmit`
 Expected: exits with no output and status 0.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/App.tsx test/components/app.test.tsx
@@ -1139,7 +1141,7 @@ git commit -m "feat: swap the live region to a command's screen and back on clos
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: Full automated verification**
+- [x] **Step 1: Full automated verification**
 
 Run: `pnpm test`
 Expected: all tests pass (commands, components, services).
@@ -1150,7 +1152,7 @@ Expected: exits with no output and status 0.
 Run: `pnpm build`
 Expected: completes without errors; `dist/cli.js` exists and is executable.
 
-- [ ] **Step 2: Manual smoke test**
+- [x] **Step 2: Manual smoke test**
 
 Run: `pnpm dev`, then in the running terminal:
 
@@ -1171,10 +1173,10 @@ Run: `pnpm dev`, then in the running terminal:
 8. Reopen `/connect` and press `Ctrl+C` while the screen is open.
    Expected: the app exits cleanly, no hang, no stack trace.
 
-- [ ] **Step 3: Fix-forward if needed**
+- [x] **Step 3: Fix-forward if needed**
 
 No source changes expected in this task — nothing to commit. If the smoke test surfaces a bug, fix it in the relevant task's file, re-run that task's tests plus `pnpm test` and `pnpm exec tsc --noEmit`, and commit the fix with an appropriate message before continuing.
 
-- [ ] **Step 4: Close out the plan**
+- [x] **Step 4: Close out the plan**
 
 Per `CLAUDE.md`: check off every completed step in this plan file and add a `**Status: Completed.**` line under the title noting the commit range, then commit the plan update.
