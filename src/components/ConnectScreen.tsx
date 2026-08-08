@@ -25,16 +25,19 @@ export function ConnectScreen({ onClose }: ConnectScreenProps) {
 
   return (
     <Box flexDirection="column" borderStyle="round" paddingX={1}>
-      <Text bold>Settings</Text>
-      <Box marginTop={1} gap={3}>
+      <Box gap={3}>
+        <Text bold>Settings</Text>
         <Text
-          bold={activeTab === 'integration'}
-          underline={activeTab === 'integration'}
+          backgroundColor={activeTab === 'integration' ? 'white' : undefined}
+          color={activeTab === 'integration' ? 'black' : undefined}
         >
-          Integration
+          {' Integration '}
         </Text>
-        <Text bold={activeTab === 'other'} underline={activeTab === 'other'}>
-          Other
+        <Text
+          backgroundColor={activeTab === 'other' ? 'white' : undefined}
+          color={activeTab === 'other' ? 'black' : undefined}
+        >
+          {' Other '}
         </Text>
       </Box>
       <Box marginTop={1} flexDirection="column">
