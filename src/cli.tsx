@@ -4,4 +4,8 @@ import { render } from 'ink';
 import { App } from './App.js';
 import { defaultHandler } from './commands/index.js';
 
-render(<App handler={defaultHandler} />);
+const { waitUntilExit } = render(<App handler={defaultHandler} />);
+
+waitUntilExit().then(() => {
+  process.exit(0);
+});

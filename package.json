@@ -8,6 +8,8 @@
   },
   "scripts": {
     "dev": "tsx src/cli.tsx",
+    "dev:debug": "DEV=true tsx src/cli.tsx",
+    "devtools": "react-devtools",
     "build": "tsc && chmod +x dist/cli.js",
     "start": "node dist/cli.js",
     "test": "tsx --test test/commands/*.test.ts test/components/*.test.tsx"
@@ -21,6 +23,8 @@
   "devDependencies": {
     "@types/node": "^20.14.0",
     "@types/react": "^18.3.3",
+    "react-devtools": "4.28.5",
+    "react-devtools-core": "4.28.5",
     "tsx": "^4.16.0",
     "typescript": "^5.5.4"
   },
