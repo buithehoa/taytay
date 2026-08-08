@@ -24,7 +24,14 @@ export function ConnectScreen({ onClose }: ConnectScreenProps) {
   });
 
   return (
-    <Box flexDirection="column" borderStyle="round" paddingX={1}>
+    <Box
+      flexDirection="column"
+      borderStyle="round"
+      borderBottom={false}
+      borderLeft={false}
+      borderRight={false}
+      paddingX={1}
+    >
       <Box gap={3}>
         <Text bold>Settings</Text>
         <Text
