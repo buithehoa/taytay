@@ -1,5 +1,5 @@
 import React, { ComponentType, useEffect, useMemo, useState } from 'react';
-import { Box, Static, useApp, useInput, useStdout } from 'ink';
+import { Box, Static, useApp, useInput } from 'ink';
 import { Scrollback, HistoryEntry } from './components/Scrollback.js';
 import { PromptInput } from './components/PromptInput.js';
 import { CommandHandler, CommandResult, createCommandRegistry } from './commands/index.js';
@@ -17,20 +17,18 @@ export function App({ handler }: AppProps) {
   const [isExiting, setIsExiting] = useState(false);
   const [activeScreen, setActiveScreen] = useState<ScreenComponent | null>(null);
   const { exit } = useApp();
-  const { write } = useStdout();
   const commandRegistry = useMemo(() => createCommandRegistry(), []);
 
   useEffect(() => {
     if (isExiting) {
       const timeout = setTimeout(() => {
-        write('\n');
         exit();
       }, EXIT_RENDER_DELAY_MS);
       return () => {
         clearTimeout(timeout);
       };
     }
-  }, [exit, isExiting, write]);
+  }, [exit, isExiting]);
 
   useInput((input, key) => {
     if (key.ctrl && input === 'c') {
@@ -78,13 +76,13 @@ export function App({ handler }: AppProps) {
       </Static>
       {ActiveScreen ? (
         <ActiveScreen onClose={() => setActiveScreen(null)} />
-      ) : (
+      ) : !isExiting ? (
         <PromptInput
-          isFocused={!isExiting}
+          isFocused
           onSubmit={handleSubmit}
           registry={commandRegistry}
         />
-      )}
+      ) : null}
     </Box>
   );
 }
